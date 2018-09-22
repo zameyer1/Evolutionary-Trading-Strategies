@@ -5,13 +5,13 @@ import operator
 import deap
 import pandas as pd
 from deap import gp,base, benchmarks,cma,creator,tools, algorithms
-# zipline requirements
 from datetime import datetime
 from zipline import run_algorithm
 from zipline.api import order, record, symbol, order_target,order_target_percent, schedule_function, date_rules, time_rules
 import pytz
 import numpy as np
 import matplotlib.pyplot as plt
+import pyfolio as pf
 
 import uuid
 
@@ -216,6 +216,7 @@ def evolveAssetStrategy(asset,cashAmount=5000,priceDataRange=30, minTrades=50,
             if ((test<0) or (test>1)):
                 score=-1
             return score
+        #def generateTearSheet(results):
             
         # define function to simulate and illustrate the hall of fame individuals
         print("defining evaluateWinners")
@@ -326,7 +327,7 @@ def evolveAssetStrategy(asset,cashAmount=5000,priceDataRange=30, minTrades=50,
                         #plt.legend(['Price','Buy','Sell'],loc=0)
                         plt.tight_layout()
                         plt.show()
-                        
+                    
                 
                     
                         
@@ -368,11 +369,12 @@ def evolveAssetStrategy(asset,cashAmount=5000,priceDataRange=30, minTrades=50,
                     return trainProfit,testProfit,fitness
                 
                 
+                HOFList.append(HOF[i])
                 HOFList.append(testEvaluation(HOF[i],str(i)))
             return HOFList
         
         
-        #%% run the evolution xover=0.5,mutation=.1,generations=40
+        #%% run the evolution 
         def runEvolution(population,cxpb,mprob,generations,recordNum):
             pop = toolbox.population(n=population)
             hof = tools.HallOfFame(recordNum)
@@ -409,7 +411,7 @@ assetList=['FB']
     
 for asset in assetList:
     figure, performance=evolveAssetStrategy(asset,cashAmount=10000, minTrades=30,
-                                maxDepth=15,popSize=30,cxpbg=0.5,mprobg=0.1,ngens=25,hofSize=20,
+                                maxDepth=15,popSize=5,cxpbg=0.5,mprobg=0.1,ngens=5,hofSize=20,
                                 trainStart=datetime(2014, 1, 1, 0, 0, 0, 0, pytz.utc),
                                 trainEnd=datetime(2016, 1, 1, 0, 0, 0, 0, pytz.utc),
                                 testStart=datetime(2016, 1, 1, 0, 0, 0, 0, pytz.utc),
@@ -417,3 +419,5 @@ for asset in assetList:
                                 riskAdjustment=2)
     figure.show()
     print(performance)
+    np.savetxt('performance.txt',performance,delimiter='')
+    
