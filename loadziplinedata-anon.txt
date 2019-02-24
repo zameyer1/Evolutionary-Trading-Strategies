@@ -1,0 +1,4 @@
+## load data for zipline environment
+
+set QUANDL_API_KEY=<xxxxxxxxxxxxxxxx>
+zipline ingest -b quandl
